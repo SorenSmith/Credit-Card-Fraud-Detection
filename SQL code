@@ -1,0 +1,65 @@
+-- 1. Check for Class Imbalance (Fraud vs. Non-Fraud)
+-- This query counts how many transactions are fraudulent (Class = 1) versus legitimate (Class = 0).
+SELECT Class, COUNT(*) AS count
+FROM creditcard
+GROUP BY Class;
+
+-- 2. Average Transaction Amount for Fraud vs. Non-Fraud
+-- This query calculates the average transaction amount for both legitimate and fraudulent transactions.
+SELECT Class, AVG(Amount) AS avg_amount
+FROM creditcard
+GROUP BY Class;
+
+-- 3. Identify Time Patterns: Fraudulent Transactions by Time of Day
+-- This query groups transactions by the hour of the day (by converting seconds to hours) and counts how many are fraudulent versus legitimate.
+SELECT FLOOR(Time / 3600) AS hour, Class, COUNT(*) AS count
+FROM creditcard
+GROUP BY hour, Class
+ORDER BY hour, Class;
+
+-- 4. Correlation Check: Identify Relationships Between Features (Basic)
+-- This query calculates the correlation between the transaction amount and two PCA-derived features (V1 and V2) to identify relationships between these variables.
+SELECT CORR(Amount, V1) AS amount_v1_corr,
+       CORR(Amount, V2) AS amount_v2_corr
+FROM creditcard;
+
+-- 5. Most Influential Features for Fraud Detection (Using High/Low Averages)
+-- This query calculates the average values of key PCA features (V1-V5) for both legitimate and fraudulent transactions.
+SELECT Class,
+       AVG(V1) AS avg_v1, AVG(V2) AS avg_v2, AVG(V3) AS avg_v3,
+       AVG(V4) AS avg_v4, AVG(V5) AS avg_v5
+FROM creditcard
+GROUP BY Class;
+
+-- 6. High-Risk Transactions: Identify Large Amounts in Fraud
+-- This query identifies the largest fraudulent transactions by filtering for transactions where the amount exceeds the average amount for fraudulent transactions.
+SELECT *
+FROM creditcard
+WHERE Class = 1 AND Amount > (SELECT AVG(Amount) FROM creditcard WHERE Class = 1)
+ORDER BY Amount DESC;
+
+-- 7. Transaction Frequency by Time Window
+-- This query counts the number of transactions (fraud and non-fraud) per day by converting time from seconds to days.
+SELECT FLOOR(Time / 86400) AS day, Class, COUNT(*) AS count
+FROM creditcard
+GROUP BY day, Class
+ORDER BY day, Class;
+
+-- 8. Identify Outliers: Transactions with Extreme Values
+-- This query finds transactions with extreme PCA values (less than -10 or greater than 10) that could indicate anomalies.
+SELECT *
+FROM creditcard
+WHERE V1 < -10 OR V1 > 10
+   OR V2 < -10 OR V2 > 10
+   OR V3 < -10 OR V3 > 10;
+
+-- 9. Fraud Detection Rate (Percentage of Fraudulent Transactions)
+-- This query calculates the percentage of transactions that are fraudulent by dividing the number of fraudulent transactions by the total count.
+SELECT (COUNT(*) FILTER (WHERE Class = 1) * 100.0 / COUNT(*)) AS fraud_rate
+FROM creditcard;
+
+-- 10. Summary Statistics for Key Variables
+-- This query provides summary statistics (minimum, maximum, and average) for the transaction amount by fraud status.
+SELECT Class, MIN(Amount) AS min_amount, MAX(Amount) AS max_amount, AVG(Amount) AS avg_amount
+FROM creditcard
+GROUP BY Class;
