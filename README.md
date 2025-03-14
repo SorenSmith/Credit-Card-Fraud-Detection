@@ -15,14 +15,12 @@ The data set consists of a single table named CreditCard with the following key 
 # Executive Summary 
 From the SQL-based analysis, we found the following key insights:
 - Fraud Occurrence: Only 0.17% of the transactions in the dataset are fraudulent, indicating a severe class imbalance. Special handling (e.g., oversampling or undersampling) may be required for modeling.
-
 - Transaction Amount: Fraudulent transactions have a higher average amount ($122) than legitimate ones ($88). Large transactions are disproportionately more likely to be fraudulent.
-
 - Time of Fraud: Fraudulent activities tend to occur at specific hours, particularly during off-peak times (between 12 AM and 6 AM), suggesting that malicious actors exploit lower monitoring periods.
-
 - Feature Influence: Variables V4, V11, and V17 show the most significant deviations between legitimate and fraudulent transactions, making them key predictors.
-
 - Outliers: Certain transactions have extreme values in PCA components (e.g., V1, V2, V3 exceeding ±10), and these are strongly associated with fraud.
+
+![Unicorns-2](https://github.com/SorenSmith/Credit-Card-Fraud-Detection/blob/main/Dashboard%201%20(2).png)
 
 # Recomendations
 - Enhanced Monitoring at Off-Peak Hours:
